@@ -2,8 +2,11 @@ import serial
 
 class Model:
     def __init__(self):
-        self.arduino_serial = serial.Serial("/tmp/simavr-uart0", 9600, timeout=1)
-        self.controller = None
+        self.arduino_serial: serial.Serial = None
+        self.controller: Controller = None
+
+    def serial_connect(self, address: str):
+        self.arduino_serial: serial.Serial = serial.Serial(address, 9600, timeout=1)
 
     def mainloop(self):
         while True:
