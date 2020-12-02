@@ -3,6 +3,13 @@ from typing import List
 import tkinter
 import tkinter.font as font
 
+
+MAIN_COLOUR = "#AEADF0"
+TEXT_COLOUR = "#2E5266"
+FRAME_COLOUR = "#FFEAD0"
+HIGHLIGHT_COLOUR = "#93032E"
+GRAPH_COLOUR = "#47E5BC"
+
 class Subsystem_Label(Enum):
     TITLE = 0
     TARGET_TITLE = 1
@@ -34,6 +41,23 @@ class View:
         self.upper_bounds = {"Temperature": 35.0, "Stiring": 1500.0, "PH": 7.0}
         self.default_values = {"Temperature": 30.0, "Stiring": 1000.0, "PH": 5.0} 
 
+    def set_colours(self):
+        self.root.tk_setPalette(background=MAIN_COLOUR, foreground=TEXT_COLOUR, activeBackground=HIGHLIGHT_COLOUR, activeForeground=HIGHLIGHT_COLOUR, highlightBackground=GRAPH_COLOUR)
+
+        self.temperature_frame["bg"] = FRAME_COLOUR
+        for el in self.temperature_labels:
+            #if isinstance(el, tkinter.label):
+            el["bg"] = FRAME_COLOUR 
+            
+        self.stiring_frame["bg"] = FRAME_COLOUR
+        for el in self.stiring_labels:
+            #if isinstance(el, tkinter.label):
+            el["bg"] = FRAME_COLOUR
+
+        self.ph_frame["bg"] = FRAME_COLOUR
+        for el in self.ph_labels:
+            #if isinstance(el, tkinter.label):
+            el["bg"] = FRAME_COLOUR
 
     def create_gui(self):
         # save images:
@@ -41,21 +65,25 @@ class View:
         self.decrement_icon = tkinter.PhotoImage(file="./images/minus.png")
         self.title_font = font.Font(family="Verdana", size=15, weight="bold")
         self.title = tkinter.Label(self.root, text="Bioreactor app control", height=2, font=self.title_font)
-      
+
+        # Main frames
+        self.control_frame = tkinter.Frame(self.root, highlightthickness=4) 
+        self.graph_frame=tkinter.Frame(self.root, highlightthickness=4)
         # Temperature subsystem
-        self.temperature_frame = tkinter.Frame(self.root, relief=tkinter.FLAT) # TODO potentially add borderwidth?
+        self.temperature_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.temperature_labels = self.create_subsystem_labels("Temperature", self.temperature_frame)
         
         # Stiring subsystem
-        self.stiring_frame = tkinter.Frame(self.root, relief=tkinter.FLAT) # TODO potentially add borderwidth?
+        self.stiring_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.stiring_labels = self.create_subsystem_labels("Stiring", self.stiring_frame)
 
         # PH subsystem
-        self.ph_frame = tkinter.Frame(self.root, relief=tkinter.FLAT) # TODO potentially add borderwidth?
+        self.ph_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.ph_labels = self.create_subsystem_labels("PH", self.ph_frame)
         
 
-        # Pack the widgets at the end
+        # Colour and Pack the widgets at the end
+        self.set_colours()
         self.pack_gui()
     
     def create_subsystem_labels(self, subsystem: str, root) -> List[tkinter.Label]:
@@ -74,6 +102,8 @@ class View:
 
     def pack_gui(self):
         self.title.pack()
+        self.control_frame.pack(side=tkinter.LEFT)
+        self.graph_frame.pack(side=tkinter.RIGHT)
         self.temperature_frame.pack(fill=tkinter.X, side=tkinter.TOP, expand=True)
         self.stiring_frame.pack(fill=tkinter.X, side=tkinter.TOP, expand=True)
         self.ph_frame.pack(fill=tkinter.X, side=tkinter.TOP, expand=True)
