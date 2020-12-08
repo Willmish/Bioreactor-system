@@ -18,3 +18,8 @@
 #define MODE 0
 #define ENABLE_INCREMENT 0b0010000 // enable autoincrement
 #define MAX_ON_TIME 4095 // we can have a maximum of 4095 asserted PWM steps 
+
+
+void prepare_pca9685();
+void pump_solute(int, byte);
+float measure_ph();
