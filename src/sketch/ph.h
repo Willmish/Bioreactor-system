@@ -1,3 +1,5 @@
+#define ph_probe A1
+
 #define F 9.6485309E+4 // Faraday's constant
 #define R 8.31450 // universal gas constant
 #define T 295.0 // room temperature in Kelvin
