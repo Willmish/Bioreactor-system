@@ -53,8 +53,3 @@ float measure_ph() {
   
   return ph;
 }
-
-
-void moderate_ph() {
-  // TODO: putting everything together
-}
