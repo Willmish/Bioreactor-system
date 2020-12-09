@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include "pca9685.h"
-
-
-#define acid_on_reg 0x06
-#define acid_off_reg 0x08
-#define base_on_reg 0x0A
-#define base_off_reg 0x0C
-#define mode_reg 0x00
-#define ph_probe A1
-#define optimum 5.0
+#include "ph.ino"
 
 
 void setup() {

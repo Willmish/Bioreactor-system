@@ -1,3 +1,5 @@
+#pragma once
+
 typedef struct {
   float p, i, d, goal;
   float error, sum;
