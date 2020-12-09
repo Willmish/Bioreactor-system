@@ -1,5 +1,6 @@
 #pragma once
 #define pca_addr 0x40
+#define mode_reg 0x00
 #define AUTOINC 0b0100000
 
 
