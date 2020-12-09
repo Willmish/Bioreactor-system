@@ -1,5 +1,4 @@
-// moderator.ino, implements a basic PID controller. Note that P, PI and PD are
-// also implicitly supported by setting p, i or d to 0.
+// moderator.ino, implements a basic PID controller
 
 
 #include <stdlib.h>
@@ -7,28 +6,30 @@
 
 
 Moderator *moderator(float p, float i, float d, float goal) {
-  Moderator *this = (Moderator *) malloc(sizeof(Moderator));
-  *this = (Moderator) {p, i, d, goal, 0.0, 0.0};
+  Moderator *self = malloc(sizeof(Moderator));
+  *self = (Moderator) {p, i, d, goal};
 
-  return this;
+  return self;
 }
 
 
-void moderator_clear(Moderator *this) {
-  this->esum = 0.0;
-  this->error = 0.0;
+void moderator_clear(Moderator *self) {
+  self->sum = 0.0;
+  self->error = 0.0;
 }
 
 
-void moderator_set_goal(Moderator *this, float goal) {
-  this->goal = goal;
+void moderator_goal(Moderator *self, float goal) {
+  self->goal = goal;
 }
 
 
-float moderator_tick(Moderator *this, float input) {
-  float err = this->goal - input;
-  float prev = this->error;
-  this->esum += err;
+float moderate(Moderator *self, float input) {
+  float e = self->goal - input;
+  float d = e - self->error;
 
-  return (this->p * err) + (this->i * this->esum) + (this->d * (err - prev));
+  self->error = e;
+  self->sum += e;
+
+  return (self->p * e) + (self->i * self->sum) + (self->d * d);
 }
