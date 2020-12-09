@@ -22,7 +22,7 @@ void write16(byte reg, short n) {
 }
 
 
-int read8(byte reg) {
+short read16(byte reg) {
   Wire.beginTransmission(pca_addr);
   Wire.write(reg);
   Wire.endTransmission(false);
