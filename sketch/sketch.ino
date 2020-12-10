@@ -3,8 +3,9 @@
 
 void setup() {
   Serial.begin(9600);
-  pinMode(ph_probe, INPUT);
   ph_setup();
+  // heat_setup();
+  // stirr_setup();
 }
 
 
