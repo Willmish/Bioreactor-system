@@ -10,6 +10,7 @@ void setup() {
 
 
 void loop() {
-  Serial.println(ph_read());
-  delay(2500);
+  ph_loop();
+  // heat_loop();
+  // stirr_loop();
 }
