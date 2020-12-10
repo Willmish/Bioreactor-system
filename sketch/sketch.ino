@@ -12,6 +12,3 @@ void loop() {
   Serial.println(ph_read());
   delay(2500);
 }
-
-
-
