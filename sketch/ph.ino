@@ -28,5 +28,5 @@ void ph_setup() {
 
 
 void ph_loop() {
-
+  Serial.println(ph_read());
 }
