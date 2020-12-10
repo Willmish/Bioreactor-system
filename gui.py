@@ -5,7 +5,7 @@ import tkinter.font as font
 #Matplotlib
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
-from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
 import numpy as np
@@ -28,13 +28,15 @@ class Subsystem_Label(Enum):
     TARGET_INCREMENT = 6
 
 class Subsystem_Graph(tkinter.Frame):
-    def __init__(self, master, data_arr, animation_interval = 100, *args, **kwargs):
+    def __init__(self, master, data_arr, data_fetch_func, y_lims, animation_interval = 500, *args, **kwargs):
         super().__init__()
         self.master = master
         # data
+        self.data_fetch_func = data_fetch_func
         self.data_arr = data_arr 
         self.time_arr = []
-        self.time = 3
+        self.time = 0
+        self.lowy, self.highy = y_lims
 
         # tk/matplotlib specific
         self.fig = None
@@ -45,8 +47,8 @@ class Subsystem_Graph(tkinter.Frame):
         self.animation_interval = animation_interval
 
     def create_graph(self):
-        self.fig = Figure(figsize=(4,2), dpi=100)
-        self.axs = self.fig.add_subplot(111)
+        self.fig = plt.figure(figsize=(4,2), dpi=100,tight_layout=True, facecolor=FRAME_COLOUR, edgecolor=GRAPH_COLOUR)
+        self.axs = plt.axes(xlim=(0,20), ylim=(self.lowy, self.highy))
         self.plot, = self.axs.plot(self.time_arr, self.data_arr)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)  # A tk.DrawingArea.
         self.canvas.draw()
@@ -58,10 +60,17 @@ class Subsystem_Graph(tkinter.Frame):
         self.fig.tight_layout()
 
     def animate(self, i):
-        self.data_arr.append(1)        
+        # Read data from label
+        # Add data
+        self.data_arr.append(self.data_fetch_func())
         self.time_arr.append(self.time/self.animation_interval)
         self.time += self.animation_interval
         self.plot.set_data(self.time_arr, self.data_arr)
+        xmin, xmax =plt.xlim()
+        if(self.time/self.animation_interval>xmax):
+           xmin += 5
+           xmax += 5
+           self.axs.set_xlim(xmin, xmax)
         self.canvas.draw()
 
 
@@ -96,7 +105,7 @@ class View:
         # Matplotlib data
         self.temperature_values = []
         self.rpm_values = []
-        self.p_values = []
+        self.ph_values = []
 
     def set_colours(self):
         self.root.tk_setPalette(background=MAIN_COLOUR, foreground=TEXT_COLOUR, activeBackground=HIGHLIGHT_COLOUR, activeForeground=HIGHLIGHT_COLOUR, highlightBackground=GRAPH_COLOUR)
@@ -130,30 +139,36 @@ class View:
         self.temperature_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.temperature_labels = self.create_subsystem_labels("Temperature", self.temperature_frame)
 
-        self.graph_temp_frame = Subsystem_Graph(self.graph_frame, self.temperature_values, highlightthickness=4)
+        self.graph_temp_frame = Subsystem_Graph(self.graph_frame, self.temperature_values, self.get_new_temp_data,(0,50), highlightthickness=4)
         self.graph_temp_frame.create_graph()
         # Stiring subsystem
         self.stiring_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.stiring_labels = self.create_subsystem_labels("Stiring", self.stiring_frame)
 
+        self.graph_stiring_frame = Subsystem_Graph(self.graph_frame, self.rpm_values, self.get_new_rpm_data, (0,1500),highlightthickness=4)
+        self.graph_stiring_frame.create_graph()
+
         # PH subsystem
         self.ph_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.ph_labels = self.create_subsystem_labels("PH", self.ph_frame)
 
+        self.graph_ph_frame = Subsystem_Graph(self.graph_frame, self.ph_values, self.get_new_ph_data, (0,7),highlightthickness=4)
+        self.graph_ph_frame.create_graph()
         
 
         # Colour and Pack the widgets at the end
         self.set_colours()
         self.pack_gui()
 
-    def create_graph(self, subsystem, master):
-        fig = Figure(figsize=(2,1), dpi=100)
-        t = np.arange(0, 3, .01)
-        fig.add_subplot(111).plot(t, 2 * np.sin(2 * np.pi * t))
+    def get_new_temp_data(self):
+        return float(self.temperature_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
 
-        canvas = FigureCanvasTkAgg(fig, master=master)  # A tk.DrawingArea.
-        canvas.draw()
-        return canvas.get_tk_widget()
+    def get_new_rpm_data(self):
+        return float(self.stiring_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
+
+    def get_new_ph_data(self):
+        return float(self.ph_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
+
     
     def create_subsystem_labels(self, subsystem: str, root) -> List[tkinter.Label]:
         # Create labels for each subsystem based on the indices specified by the Subsystem_Label ENUM
@@ -181,6 +196,12 @@ class View:
         # Graphs
         self.graph_temp_frame.pack(side=tkinter.RIGHT, fill=tkinter.X, expand=True)
         self.graph_temp_frame.pack_widget(fill=tkinter.X, expand=True) 
+        
+        self.graph_stiring_frame.pack(side=tkinter.RIGHT, fill=tkinter.X, expand=True)
+        self.graph_stiring_frame.pack_widget(fill=tkinter.X, expand=True) 
+
+        self.graph_ph_frame.pack(side=tkinter.RIGHT, fill=tkinter.X, expand=True)
+        self.graph_ph_frame.pack_widget(fill=tkinter.X, expand=True) 
 
     def pack_subsystem_labels(self):
         # Pack all subsystem labels and buttons
