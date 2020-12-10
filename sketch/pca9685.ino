@@ -1,7 +1,6 @@
-// interface for the PCA9685
+// pca9685.ino, a software interface for the PCA9685
 
 
-#include <Wire.h>
 #include "pca9685.h"
 
 

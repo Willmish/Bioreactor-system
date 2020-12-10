@@ -1,7 +1,6 @@
 // moderator.ino, implements a basic PID controller
 
 
-#include <stdlib.h>
 #include "./moderator.h"
 
 

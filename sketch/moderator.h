@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include <stdlib.h>
+
+
 typedef struct {
   float p, i, d, goal;
   float error, sum;
