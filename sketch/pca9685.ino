@@ -31,5 +31,5 @@ short read16(byte reg) {
   byte n2 = Wire.read();
   Wire.endTransmission();
 
-  return (int) (n2 << 8) + n1;
+  return (short) (n2 << 8) + n1;
 }
