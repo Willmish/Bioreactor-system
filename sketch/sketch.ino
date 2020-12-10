@@ -13,4 +13,5 @@ void loop() {
   ph_loop();
   // heat_loop();
   // stirr_loop();
+  delay(1000);
 }
