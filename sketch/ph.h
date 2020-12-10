@@ -5,7 +5,6 @@
 #include <math.h>
 #include "./pca9685.h"
 #include "./moderator.h"
-#include "./ph.h"
 
 #define acid_reg 0x06
 #define base_reg 0x0A
