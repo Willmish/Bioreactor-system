@@ -7,7 +7,6 @@
 #include "./moderator.h"
 #include "./ph.h"
 
-
 #define acid_reg 0x06
 #define base_reg 0x0A
 #define ph_probe A1
@@ -17,7 +16,6 @@
 #define R 8.314510 // gas constant
 #define T 295.0 // room temperature
 #define vstd 500.0 // voltage at pH-7
-
 
 static void turn_on(byte);
 static void turn_off(byte);
