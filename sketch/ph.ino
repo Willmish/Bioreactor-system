@@ -22,6 +22,7 @@ float ph_read() {
 
 
 void ph_setup() {
+  pinMode(ph_probe, INPUT);
   write8(mode_reg, AUTOINC);
 }
 
