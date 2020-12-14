@@ -18,7 +18,8 @@ const byte heaterPin     = 6;
 const byte thermistorPin = A0;
 const byte pHPin         = A1;
 
-int rotPerSec = 0;
+int intCount = 0;
+int noRevolutionsForReading = 25;
 long long startTime = -1;
 
 // The PCA9685 is connected to the default I2C connections. There is no need
@@ -35,31 +36,36 @@ void setup() {
   pinMode(thermistorPin, INPUT);
   pinMode(pHPin,         INPUT);
 
+  attachInterrupt(digitalPinToInterrupt(lightgatePin), rotate, RISING);
   // More setup...
+  startTime = millis();
+
+  Serial.println("Enter rpm val: ");
+  while(!Serial.available());
+  Serial.setTimeout(2500);
+  int val = Serial.parseInt();
+  Serial.println(val);
+  Serial.println("Begin!");
+  analogWrite(stirrerPin, val);
   }
 
  
 void loop() { 
-    analogWrite(heaterPin, 255);
-    delay(1500);
-    Serial.print("thermistor voltage: ");
-    Serial.println(analogRead(thermistorPin));
-/*
-    // STIRRING
-    digitalWrite(stirrerPin, HIGH);
-    int lighgateVal = digitalRead(lightgatePin);
-    Serial.println(lighgateVal);
-    rotPerSec += digitalRead(lightgatePin);
-    if (startTime == -1)
-    {
-        startTime = millis();    
-    }
-    if (millis()-startTime >= 10000)
-    {
-        Serial.print("RPM: ");
-        Serial.println(rotPerSec*6);
-        startTime=millis();
-    }*/
+if(intCount == noRevolutionsForReading)
+{
+   long long prevTime = startTime;
+   startTime = millis();
+   Serial.print("RPM = ");
+   double rpm = (noRevolutionsForReading/2)/((double)(millis()-prevTime)/1000);
+   rpm *= 60;
+   Serial.println(rpm);
+   intCount = 0;
+}
+}
+
+void rotate()
+{
+   intCount += 1; 
 }
 
 
