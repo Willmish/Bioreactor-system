@@ -1,5 +1,4 @@
-
-
+#pragma once
 #include <stdio.h>
 #include <string.h>
 
@@ -7,9 +6,6 @@
 //
 const byte lightgatePin  = 2;
 const byte stirrerPin    = 5;
-const byte heaterPin     = 6;
-const byte thermistorPin = A0;
-const byte pHPin         = A1;
 
 int intCount = 0;
 int noRevolutionsForReading = 100;
@@ -25,9 +21,6 @@ void setup() {
 
   pinMode(lightgatePin,  INPUT);
   pinMode(stirrerPin,    OUTPUT);
-  pinMode(heaterPin,     OUTPUT);
-  pinMode(thermistorPin, INPUT);
-  pinMode(pHPin,         INPUT);
 
   attachInterrupt(digitalPinToInterrupt(lightgatePin), rotate, RISING);
   // More setup...
@@ -42,6 +35,7 @@ void setup() {
   Serial.println("Begin!");
   analogWrite(stirrerPin, pwm);
   }
+
 
  
 void loop() { 

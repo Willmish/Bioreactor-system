@@ -16,7 +16,7 @@ TEXT_COLOUR = "#2E5266"
 FRAME_COLOUR = "#FFEAD0"
 HIGHLIGHT_COLOUR = "#93032E"
 GRAPH_COLOUR = "#47E5BC"
-DEBUGGING = True
+DEBUGGING = False
 
 class Subsystem_Label(Enum):
     TITLE = 0
@@ -106,6 +106,25 @@ class View:
         self.temperature_values = []
         self.rpm_values = []
         self.ph_values = []
+
+    def set_data(self,current_temperature: float, current_rpm: float, current_ph: float):
+        temp_label = self.temperature_labels[Subsystem_Label.CURRENT_VALUE.value]
+        rpm_label = self.stiring_labels[Subsystem_Label.CURRENT_VALUE.value]
+        ph_label = self.ph_labels[Subsystem_Label.CURRENT_VALUE.value]
+
+        if(float(temp_label["text"]) != current_temperature):
+            temp_label["text"] = str(current_temperature);
+        if(float(rpm_label["text"]) != current_rpm):
+            rpm_label["text"] = str(current_rpm);
+        if(float(ph_label["text"]) != current_ph):
+            ph_label["text"] = str(current_ph);
+
+    def send_targets(self):
+        self.controller.set_target(self.get_target(self.temperature_labels), self.get_target(self.stiring_labels), self.get_target(self.ph_labels))
+
+
+    def get_target(self,subsystem: List[tkinter.Label]) -> float:
+        return float(subsystem[Subsystem_Label.TARGET_VALUE.value]["text"])
 
     def set_colours(self):
         self.root.tk_setPalette(background=MAIN_COLOUR, foreground=TEXT_COLOUR, activeBackground=HIGHLIGHT_COLOUR, activeForeground=HIGHLIGHT_COLOUR, highlightBackground=GRAPH_COLOUR)
@@ -252,6 +271,7 @@ class View:
 
         target_label["text"] = current_value
         # TODO send msg to controller to decrement the value 
+        self.send_targets()
 
     def increment_target_value(self, subsystem: str):
         print(f"{subsystem}'s increment button pressed!")
@@ -277,6 +297,7 @@ class View:
             current_value = self.upper_bounds[subsystem]
 
         target_label["text"] = current_value
+        self.send_targets()
 
     def register_controller(self, controller):
         self.controller = controller
