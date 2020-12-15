@@ -12,10 +12,11 @@ class Controller:
     def run(self):
         # Start listening on simduino Serial port, start the gui
         self._model.serial_connect("/tmp/simavr-uart0")
+        self._view.create_gui()
         thread1 = threading.Thread(target=self._model.mainloop) # TODO uncomment when snooping working
         thread1.start()
 
-        self._view.create_gui()
+
         self._view.mainloop()
 
 

@@ -16,6 +16,7 @@ int intCount = 0;
 int noRevolutionsForReading = 100;
 long long startTime = -1;
 long long prevTime = -1;
+long long lastMsgSent = -1;
 
 // CURRENT READING VALUES
 double temperature= 0;
@@ -40,13 +41,12 @@ void setup() {
 
 	attachInterrupt(digitalPinToInterrupt(lightgatePin), rotate, RISING);
     // delay to close picocom and connect to controller
-    Serial.println("Wait for python to connect...");
-    delay(5000);
-    Serial.println("Done waiting around! Time to work");
-    Serial.flush();
-	while(!Serial.available());
-    read_when_available();
 	startTime = millis();
+
+    lastMsgSent = millis();
+    rpm_target = 1000;
+    temperature_target = 25;
+    ph_target = 5;
 	}
 
 void split_values(char values[], float* target[])
@@ -64,31 +64,37 @@ void split_values(char values[], float* target[])
 
 void write_values()
 {
-    Serial.println(String(temperature) + ' ' + String(rpm) + ' '\
-    + String(ph));
+    if(millis()-lastMsgSent >= 500)
+    {
+        Serial.flush();
+        Serial.print(temperature);
+        Serial.print(" ");
+        Serial.print(rpm);
+        Serial.print(" ");
+        Serial.print(ph);
+        Serial.println();
+        lastMsgSent = millis();
+    }
 }
 
-void read_when_available()
+void serialEvent()
 {
     if(Serial.available())
     {
-        String values = Serial.readStringUntil('\n');
+        char values[1024];
+        Serial.readBytesUntil('\n', values, 1024);
         Serial.flush();
         float* subsystem_values = malloc(sizeof(float)* NO_SUBSYSTEMS); // Heating, stiring, ph
-        split_values(values.c_str(), &subsystem_values);
+        split_values(values, &subsystem_values);
         temperature_target = subsystem_values[0];
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
         free(subsystem_values);
-        Serial.println(temperature_target);
-        Serial.println(rpm_target);
-        Serial.println(ph_target);
     }
 }
 
  
 void loop() { 
-    read_when_available();
 	analogWrite(stirrerPin, rpm_target/12.183);
     if(intCount == noRevolutionsForReading)
     {
