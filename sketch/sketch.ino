@@ -14,7 +14,7 @@ const byte thermistorPin = A0;
 const byte pHPin				 = A1;
 
 int intCount = 0;
-int noRevolutionsForReading = 100;
+int noRevolutionsForReading = 50;
 long long startTime = -1;
 long long prevTime = -1;
 long long startTime_temp = -1;
@@ -49,19 +49,6 @@ void setup() {
     ph_target = 5;
 	}
 
-void split_values(char values[], float* target[])
-{
-    // split input into float array 
-    int i = 0;
-    char* split = strtok(values, " ");
-    while (split != NULL)
-    {
-        (*target)[i] = atof(split);
-        split = strtok(NULL, " ");
-        ++i;
-    }
-}
-
 void write_values()
 {
     Serial.print(temperature);
@@ -78,18 +65,31 @@ void serialEvent()
     Serial.readBytesUntil('\n', msg, 1024);
     Serial.flush();
     //Serial.println("Something got sent!");
-    if (strcmp(msg, "get current") == 0)
+    //Serial.println(msg);
+    if (strncmp(msg, "get current", 11) == 0) // get around random ph target getting sent when rpm under 1000?
     {
-        Serial.println("Current requested!");
+        //Serial.println("Current requested!");
         write_values();
     }
     else{
-        float* subsystem_values = malloc(sizeof(float)* NO_SUBSYSTEMS); // Heating, stiring, ph
-        split_values(msg, &subsystem_values);
+        float subsystem_values[NO_SUBSYSTEMS];
+        // split into 3 vals
+        int i = 0;
+        char* split = strtok(msg, " ");
+        while (split != NULL)
+        {
+            subsystem_values[i] = atof(split);
+            split = strtok(NULL, " ");
+            ++i;
+        }
+        free(split);
+        // end split
         temperature_target = subsystem_values[0];
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
-        free(subsystem_values);
+        //Serial.println(temperature_target);
+        //Serial.println(rpm_target);
+        //Serial.println(ph_target);
     }
 }
 
@@ -98,6 +98,7 @@ void loop() {
 // ---------------- STIRING SUBSYSTEM -----------------
 	analogWrite(stirrerPin, rpm_target/12.183);
 // ----------------------------------------------------
+
 // ---------------- HEATING SUBSYSTEM -----------------
     float error = 0;
     float errorsum = 0;
@@ -136,6 +137,7 @@ void loop() {
     }
     analogWrite(heaterPin, pwm);
 // ----------------------------------------------------
+
 }
 
 void rotate()
@@ -150,6 +152,4 @@ void rotate()
              intCount = 0;
         }
 }
-
-
 

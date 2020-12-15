@@ -24,21 +24,26 @@ class Model:
 
     def set_target(self,target_temperature: float, target_rpm: float, target_ph: float):
         print("Sending target..")
-        message = str(target_temperature) + ' ' + str(target_rpm) +\
-                                 ' ' + str(target_ph) + '\n'
-        
+        message = str(target_temperature) + ' ' + str(target_rpm) + ' ' + str(target_ph) + '\n'
+        print(message) 
         self.arduino_serial.write(bytes(message, 'ascii'))
     
     def get_current(self):
+        #while (self.arduino_serial.in_waiting):
+        #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+        #    print(data)
         self.arduino_serial.write(bytes("get current\n", 'ascii'))
         print("Getting current..")
         sleep(0.2) # Wait for an answer from arduino
+        #while (self.arduino_serial.in_waiting):
+        #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+        #    print(data)
         data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
-        #if(str(data, encoding="ascii") == "Something got sent!"):
-        #    print(data)
-        #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
-        #    print(data)
-        #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+        if(str(data, encoding="ascii") == "Something got sent!"):
+            print(data)
+            data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+            print(data)
+            data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
         if(str(data, encoding="ascii") == "Current requested!"):
             print(data)
             data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
