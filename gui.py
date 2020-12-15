@@ -8,8 +8,6 @@ from matplotlib.backends.backend_tkagg import (
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 
-import numpy as np
-
 
 MAIN_COLOUR = "#AEADF0"
 TEXT_COLOUR = "#2E5266"
@@ -73,10 +71,6 @@ class Subsystem_Graph(tkinter.Frame):
            self.axs.set_xlim(xmin, xmax)
         self.canvas.draw()
 
-
-    def update_data(self):
-        pass
-    
     def pack_widget(self, *args, **kwargs):
         self.widget.pack(*args, **kwargs)
 
@@ -270,8 +264,6 @@ class View:
             current_value = self.lower_bounds[subsystem]
 
         target_label["text"] = current_value
-        # TODO send msg to controller to decrement the value 
-        self.send_targets()
 
     def increment_target_value(self, subsystem: str):
         print(f"{subsystem}'s increment button pressed!")
@@ -297,7 +289,6 @@ class View:
             current_value = self.upper_bounds[subsystem]
 
         target_label["text"] = current_value
-        self.send_targets()
 
     def register_controller(self, controller):
         self.controller = controller

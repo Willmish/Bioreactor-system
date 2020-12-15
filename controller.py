@@ -15,8 +15,6 @@ class Controller:
         self._view.create_gui()
         thread1 = threading.Thread(target=self._model.mainloop) # TODO uncomment when snooping working
         thread1.start()
-
-
         self._view.mainloop()
 
 
@@ -25,6 +23,9 @@ class Controller:
 
     def set_target(self,target_temperature: float, target_rpm: float, target_ph: float):
         self._model.set_target(target_temperature, target_rpm, target_ph);
+
+    def send_target(self):
+        self._view.send_targets()
 
 if __name__ == "__main__":
     controller = Controller()
