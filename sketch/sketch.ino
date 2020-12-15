@@ -126,7 +126,7 @@ void loop() {
     }
     error=temperature_target-temperature;
     // calculate pwm
-    pwm=(5*error)+(2*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
+    pwm=(15*error)+(5*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
 
     //Don't let pwm go over 255 or under 0
     if(pwm<0){
