@@ -3,6 +3,7 @@
 #include "stiring.h"
 
 #define NO_SUBSYSTEMS 3
+#define NO_READINGS_HEATING 30
 
 // These define which pins are connected to what device on the virtual bioreactor
 //
@@ -16,6 +17,7 @@ int intCount = 0;
 int noRevolutionsForReading = 100;
 long long startTime = -1;
 long long prevTime = -1;
+long long startTime_temp = -1;
 
 // CURRENT READING VALUES
 double temperature= 0;
@@ -93,20 +95,60 @@ void serialEvent()
 
  
 void loop() { 
+// ---------------- STIRING SUBSYSTEM -----------------
 	analogWrite(stirrerPin, rpm_target/12.183);
-    if(intCount == noRevolutionsForReading)
+// ----------------------------------------------------
+// ---------------- HEATING SUBSYSTEM -----------------
+    float error = 0;
+    float errorsum = 0;
+    float pwm;
+    //Find Temperature from Thermistor.
+    // get 10 readings and average it
+    temperature = 0;
+    int i = 0;
+    startTime_temp = millis();
+    while (i<NO_READINGS_HEATING)
     {
-         prevTime = startTime;
-         startTime = millis();
-         rpm = (noRevolutionsForReading/2)/((double)(millis()-prevTime)/1000);
-         rpm *= 60;
-         intCount = 0;
+        if (millis() - startTime_temp >= 2)
+        {
+            temperature += (analogRead(thermistorPin)-782.86)/-10.678;
+            ++i;
+            startTime_temp = millis();
+        }
     }
+    temperature /= NO_READINGS_HEATING;
+
+    error=temperature_target-temperature;
+    while(error>=0){
+      errorsum+=error;
+      error-=1;
+    }
+    error=temperature_target-temperature;
+    // calculate pwm
+    pwm=(5*error)+(2*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
+
+    //Don't let pwm go over 255 or under 0
+    if(pwm<0){
+    pwm=0;
+    }
+    if(pwm>255){
+    pwm=255;
+    }
+    analogWrite(heaterPin, pwm);
+// ----------------------------------------------------
 }
 
 void rotate()
 {
-	 intCount += 1; 
+    intCount += 1; 
+    if(intCount >= noRevolutionsForReading)
+        {
+             prevTime = startTime;
+             startTime = millis();
+             rpm = (noRevolutionsForReading/2)/((double)(millis()-prevTime)/1000);
+             rpm *= 60;
+             intCount = 0;
+        }
 }
 
 

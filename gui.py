@@ -32,6 +32,7 @@ class Subsystem_Graph(tkinter.Frame):
         # data
         self.data_fetch_func = data_fetch_func
         self.data_arr = data_arr 
+        self.target_arr = []
         self.time_arr = []
         self.time = 0
         self.lowy, self.highy = y_lims
@@ -47,7 +48,9 @@ class Subsystem_Graph(tkinter.Frame):
     def create_graph(self):
         self.fig = plt.figure(figsize=(4,2), dpi=100,tight_layout=True, facecolor=FRAME_COLOUR, edgecolor=GRAPH_COLOUR)
         self.axs = plt.axes(xlim=(0,20), ylim=(self.lowy, self.highy))
-        self.plot, = self.axs.plot(self.time_arr, self.data_arr)
+        self.data_plot, = self.axs.plot(self.time_arr, self.data_arr, color=GRAPH_COLOUR)
+        self.target_plot, = self.axs.plot(self.time_arr, self.target_arr, alpha=0.5, color="orange", 
+                linestyle='--')
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)  # A tk.DrawingArea.
         self.canvas.draw()
         self.widget = self.canvas.get_tk_widget()
@@ -60,10 +63,14 @@ class Subsystem_Graph(tkinter.Frame):
     def animate(self, i):
         # Read data from label
         # Add data
-        self.data_arr.append(self.data_fetch_func())
+        data, target = self.data_fetch_func()
+        self.data_arr.append(data)
+        self.target_arr.append(target)
+
         self.time_arr.append(self.time/self.animation_interval)
         self.time += self.animation_interval
-        self.plot.set_data(self.time_arr, self.data_arr)
+        self.target_plot.set_data(self.time_arr, self.target_arr)
+        self.data_plot.set_data(self.time_arr, self.data_arr)
         xmin, xmax =plt.xlim()
         if(self.time/self.animation_interval>xmax):
            xmin += 5
@@ -91,7 +98,7 @@ class View:
         self.decrement_icon = None
 
         # subsystem boundries
-        self.subsystem_increments = {"Temperature": 0.5, "Stiring": 10.0, "PH": 0.5}
+        self.subsystem_increments = {"Temperature": 0.5, "Stiring": 50.0, "PH": 0.5}
         self.lower_bounds = {"Temperature": 25.0, "Stiring": 500.0, "PH": 3.0}
         self.upper_bounds = {"Temperature": 35.0, "Stiring": 1500.0, "PH": 7.0}
         self.default_values = {"Temperature": 30.0, "Stiring": 1000.0, "PH": 5.0} 
@@ -174,13 +181,19 @@ class View:
         self.pack_gui()
 
     def get_new_temp_data(self):
-        return float(self.temperature_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
+        return (float(self.temperature_labels[Subsystem_Label.CURRENT_VALUE.value]["text"]),
+                float(self.temperature_labels[Subsystem_Label.TARGET_VALUE.value]["text"]))
+
 
     def get_new_rpm_data(self):
-        return float(self.stiring_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
+        return (float(self.stiring_labels[Subsystem_Label.CURRENT_VALUE.value]["text"]),
+                float(self.stiring_labels[Subsystem_Label.TARGET_VALUE.value]["text"]))
+
 
     def get_new_ph_data(self):
-        return float(self.ph_labels[Subsystem_Label.CURRENT_VALUE.value]["text"])
+        return (float(self.ph_labels[Subsystem_Label.CURRENT_VALUE.value]["text"]),
+                float(self.ph_labels[Subsystem_Label.TARGET_VALUE.value]["text"]))
+
 
     
     def create_subsystem_labels(self, subsystem: str, root) -> List[tkinter.Label]:
