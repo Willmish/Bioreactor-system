@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "stiring.h"
+#include "ph.h"
 
 #define NO_SUBSYSTEMS 3
 #define NO_READINGS_HEATING 30
@@ -39,7 +40,7 @@ void setup() {
 	pinMode(heaterPin,		 OUTPUT);
 	pinMode(thermistorPin, INPUT);
 	pinMode(pHPin,				 INPUT);
-
+    ph_setup();
 	attachInterrupt(digitalPinToInterrupt(lightgatePin), rotate, RISING);
     // delay to close picocom and connect to controller
 	startTime = millis();
@@ -138,6 +139,9 @@ void loop() {
     analogWrite(heaterPin, pwm);
 // ----------------------------------------------------
 
+// ------------------- PH SUBSYSTEM -------------------
+ph = ph_read();
+// ----------------------------------------------------
 }
 
 void rotate()
