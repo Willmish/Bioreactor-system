@@ -1,7 +1,7 @@
 #include "./ph.h"
 
 
-float change;
+float change, optimum = 5.0
 Moderator *phmod = moderator(1.0, 0.5, 1.0, optimum);
 
 
@@ -28,6 +28,16 @@ float ph_read() {
 void ph_setup() {
   pinMode(ph_probe, INPUT);
   write8(mode_reg, AUTOINC);
+}
+
+
+ph_set_target(float value) {
+  moderator_set_goal(phmod, value);
+}
+
+
+float ph_get_current() {
+  return ph_read():
 }
 
 
