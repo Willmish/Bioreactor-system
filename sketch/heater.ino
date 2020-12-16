@@ -1,10 +1,17 @@
-
+#include "heater.h"
 #include <stdio.h>
 #include <string.h>
 
-#define NO_READINGS 30
-// These define which pins are connected to what device on the virtual bioreactor
-//
+
+void ht_setup()
+{
+
+}
+
+void ht_set_target(float target)
+{
+
+}
 const byte lightgatePin  = 2;
 const byte stirrerPin    = 5;
 const byte heaterPin     = 6;

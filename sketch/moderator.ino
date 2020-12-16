@@ -37,3 +37,8 @@ float moderate(Moderator *self, float input) {
 
   return (self->p * e) + (self->i * self->sum) + (self->d * d);
 }
+
+void moderator_cleanup(Moderator* self)
+{
+    free(self);
+}
