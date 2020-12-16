@@ -1,5 +1,4 @@
 Makefile
 __pycache__
 test.*
-bin
 venv
