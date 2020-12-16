@@ -19,9 +19,7 @@ static void turn_off(byte reg) {
 
 float ph_read() {
   int vout = analogRead(ph_probe);
-  float ln = log(10)/log(2.71828);
-
-  return 7.0 + ((vstd - vout)*F*0.001)/(R*T*ln);
+  return 7.0 + ((-vstd + vout)*F*0.001)/(R*T*ln10);
 }
 
 
@@ -29,11 +27,19 @@ void ph_setup() {
   pinMode(ph_probe, INPUT);
   write8(mode_reg, AUTOINC);
   moderator_clear(phmod);
+  //turn_on(acid_reg);
+  //delay(350);
+  //turn_off(acid_reg);
+  //Serial.println(ph_read());
 }
 
 
 void ph_set_target(float value) {
   moderator_goal(phmod, value);
+}
+
+void ph_set_temperature(float temp_kelvin) {
+    T = temp_kelvin;
 }
 
 
@@ -48,11 +54,11 @@ void ph_loop() {
 
   change = moderate(phmod, ph_read());
 
-  if (change < -0.5) {
+  if (change > 0.5) {
     turn_on(base_reg);
   } 
 
-  else if (change > 0.5) {
+  else if (change < -0.5) {
     turn_on(acid_reg);
   }
 }

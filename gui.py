@@ -182,7 +182,7 @@ class View:
         self.ph_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.ph_labels = self.create_subsystem_labels("PH", self.ph_frame)
 
-        self.graph_ph_frame = Subsystem_Graph(self.graph_frame, self.ph_values, self.get_new_ph_data, (0,7), self.subsystem_error["PH"], highlightthickness=4)
+        self.graph_ph_frame = Subsystem_Graph(self.graph_frame, self.ph_values, self.get_new_ph_data, (2,9), self.subsystem_error["PH"], highlightthickness=4)
         self.graph_ph_frame.create_graph()
         
 

@@ -4,6 +4,7 @@
 
 #define NO_SUBSYSTEMS 3
 #define NO_READINGS_HEATING 30
+#define ZERO_CELSIUS 273.15 // zero celsius in kelvin
 
 // These define which pins are connected to what device on the virtual bioreactor
 //
@@ -120,7 +121,7 @@ void loop() {
         }
     }
     temperature /= NO_READINGS_HEATING;
-
+    
     error=temperature_target-temperature;
     while(error>=0){
       errorsum+=error;
@@ -141,8 +142,11 @@ void loop() {
 // ----------------------------------------------------
 
 // ------------------- PH SUBSYSTEM -------------------
+    // Update temperature from the heating subsystem
+    ph_set_temperature(temperature + ZERO_CELSIUS);
     ph_loop();
     ph = ph_get_current();
+    //Serial.println(ph);
 // ----------------------------------------------------
 }
 

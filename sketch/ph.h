@@ -11,8 +11,9 @@
 
 #define F 9.6485309E+4 // Faraday
 #define R 8.314510 // gas constant
-#define T 295.0 // room temperature
 #define vstd 500.0 // voltage at pH-7
+#define ln10 2.3025850929940456840179914546843642076011014886287729760333279009
+double T = 295.0;// room temperature
 
 static void turn_on(byte);
 static void turn_off(byte);
@@ -21,4 +22,5 @@ void ph_setup();
 void ph_loop();
 float ph_get_current();
 void ph_set_target(float);
+void ph_set_temperature(float temp_kelvin);
 
