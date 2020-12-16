@@ -26,16 +26,19 @@ class Subsystem_Label(Enum):
     TARGET_INCREMENT = 6
 
 class Subsystem_Graph(tkinter.Frame):
-    def __init__(self, master, data_arr, data_fetch_func, y_lims, animation_interval = 500, *args, **kwargs):
+    def __init__(self, master, data_arr, data_fetch_func, y_lims, y_error, animation_interval = 500, *args, **kwargs):
         super().__init__()
         self.master = master
         # data
         self.data_fetch_func = data_fetch_func
         self.data_arr = data_arr 
         self.target_arr = []
+        self.target_minus_err = []
+        self.target_plus_err = []
         self.time_arr = []
         self.time = 0
         self.lowy, self.highy = y_lims
+        self.error = y_error
 
         # tk/matplotlib specific
         self.fig = None
@@ -51,6 +54,7 @@ class Subsystem_Graph(tkinter.Frame):
         self.data_plot, = self.axs.plot(self.time_arr, self.data_arr, color=GRAPH_COLOUR)
         self.target_plot, = self.axs.plot(self.time_arr, self.target_arr, alpha=0.5, color="orange", 
                 linestyle='--')
+        self.error_fill_collection = self.axs.fill_between(self.time_arr, self.target_minus_err, self.target_plus_err, color="orange", alpha=0.5, linestyle="--")
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)  # A tk.DrawingArea.
         self.canvas.draw()
         self.widget = self.canvas.get_tk_widget()
@@ -66,11 +70,16 @@ class Subsystem_Graph(tkinter.Frame):
         data, target = self.data_fetch_func()
         self.data_arr.append(data)
         self.target_arr.append(target)
-
+        self.target_plus_err.append(target+self.error)
+        self.target_minus_err.append(target-self.error)
+        # Update the target/data graphs
         self.time_arr.append(self.time/self.animation_interval)
         self.time += self.animation_interval
         self.target_plot.set_data(self.time_arr, self.target_arr)
         self.data_plot.set_data(self.time_arr, self.data_arr)
+        # Update the fill_between collection
+        self.axs.collections.clear()
+        self.error_fill_collection = self.axs.fill_between(self.time_arr, self.target_minus_err, self.target_plus_err, color="orange", alpha=0.2, linestyle="--")
         xmin, xmax =plt.xlim()
         if(self.time/self.animation_interval>xmax):
            xmin += 5
@@ -102,6 +111,7 @@ class View:
         self.lower_bounds = {"Temperature": 25.0, "Stiring": 500.0, "PH": 3.0}
         self.upper_bounds = {"Temperature": 35.0, "Stiring": 1500.0, "PH": 7.0}
         self.default_values = {"Temperature": 30.0, "Stiring": 1000.0, "PH": 5.0} 
+        self.subsystem_error = {"Temperature": 0.5, "Stiring": 20.0, "PH": 0.5} 
         
         # Matplotlib data
         self.temperature_values = []
@@ -159,20 +169,20 @@ class View:
         self.temperature_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.temperature_labels = self.create_subsystem_labels("Temperature", self.temperature_frame)
 
-        self.graph_temp_frame = Subsystem_Graph(self.graph_frame, self.temperature_values, self.get_new_temp_data,(0,50), highlightthickness=4)
+        self.graph_temp_frame = Subsystem_Graph(self.graph_frame, self.temperature_values, self.get_new_temp_data,(23,38), self.subsystem_error["Temperature"], highlightthickness=4)
         self.graph_temp_frame.create_graph()
         # Stiring subsystem
         self.stiring_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.stiring_labels = self.create_subsystem_labels("Stiring", self.stiring_frame)
 
-        self.graph_stiring_frame = Subsystem_Graph(self.graph_frame, self.rpm_values, self.get_new_rpm_data, (0,1500),highlightthickness=4)
+        self.graph_stiring_frame = Subsystem_Graph(self.graph_frame, self.rpm_values, self.get_new_rpm_data, (450,1500), self.subsystem_error["Stiring"], highlightthickness=4)
         self.graph_stiring_frame.create_graph()
 
         # PH subsystem
         self.ph_frame = tkinter.Frame(self.control_frame, highlightthickness=4) # TODO potentially add borderwidth?
         self.ph_labels = self.create_subsystem_labels("PH", self.ph_frame)
 
-        self.graph_ph_frame = Subsystem_Graph(self.graph_frame, self.ph_values, self.get_new_ph_data, (0,7),highlightthickness=4)
+        self.graph_ph_frame = Subsystem_Graph(self.graph_frame, self.ph_values, self.get_new_ph_data, (0,7), self.subsystem_error["PH"], highlightthickness=4)
         self.graph_ph_frame.create_graph()
         
 

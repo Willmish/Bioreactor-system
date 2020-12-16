@@ -33,8 +33,8 @@ Because two infinite loops have to be run concurrently (GUI and Serial connectio
 
 ## Arduino-Python interface
 The simAVR simulation arduino communicates with a Python script via a serial port. The messages are sent in ASCII,
-as to make them easy to understand by a human when debugging. Each message, either from python or from arduino
-ends with an ENDLINE ASCII character (\n, character 10).
+as to make them easy to understand by a human when debugging. (And it really was necessary to understand it when debugging :) )
+Each message, either from python or from arduino ends with an ENDLINE ASCII character (\n, character 10).
 
 ### Communication timings
 Because the communication between arduino and python was not 100% reliable when the messages were sent as soon as they were available
@@ -51,6 +51,7 @@ This process repeats in an infinite loop, until the connection is broken or the 
 
 ## Possible improvements
 Different control methods, e.g. manual control, PID control, Proportional control, bang bang add default automatic control
+Color selecting for ease of use (nice view)
 
 ### Color scheme
 https://coolors.co/ffead0-2e5266-aeadf0-47e5bc-93032e
