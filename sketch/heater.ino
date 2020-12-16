@@ -1,4 +1,3 @@
-#pragma once
 #include "heater.h"
 #include "moderator.h"
 #include <stdio.h>

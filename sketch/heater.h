@@ -1,6 +1,8 @@
 #pragma once
-#include "./moderator.h"
-#define NO_READINGS 30
+#include <stdio.h>
+#include "moderator.h"
+
+#define NO_READINGS_HEATING 30
 #define heater_pin 6
 #define thermistor_pin A0
 
