@@ -32,7 +32,7 @@ void ph_setup() {
 
 
 ph_set_target(float value) {
-  moderator_set_goal(phmod, value);
+  moderator_goal(phmod, value);
 }
 
 
