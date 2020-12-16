@@ -1,6 +1,10 @@
 #include "./ph.h"
 
 
+float change, optimum = 5.0;
+Moderator *phmod = moderator(1.0, 0.5, 1.0, optimum);
+
+
 static void turn_on(byte reg) {
   write16(reg, 0x0002);
   write16(reg + 2, 0x000F);
@@ -27,6 +31,28 @@ void ph_setup() {
 }
 
 
-void ph_loop() {
-  Serial.println(ph_read());
+void ph_set_target(float value) {
+  moderator_goal(phmod, value);
 }
+
+
+float ph_get_current() {
+  return ph_read();
+}
+
+
+void ph_loop() {
+  turn_off(acid_reg);
+  turn_off(base_reg);
+
+  change = moderate(phmod, ph_read());
+
+  if (change < -4) {
+    turn_on(base_reg);
+  } 
+
+  else if (change > 4) {
+    turn_on(acid_reg);
+  }
+}
+

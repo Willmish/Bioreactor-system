@@ -40,7 +40,6 @@ void setup() {
 	pinMode(heaterPin,		 OUTPUT);
 	pinMode(thermistorPin, INPUT);
 	pinMode(pHPin,				 INPUT);
-    ph_setup();
 	attachInterrupt(digitalPinToInterrupt(lightgatePin), rotate, RISING);
     // delay to close picocom and connect to controller
 	startTime = millis();
@@ -48,6 +47,8 @@ void setup() {
     rpm_target = 1000;
     temperature_target = 25;
     ph_target = 5;
+    ph_setup();
+    ph_set_target(ph_target);
 	}
 
 void write_values()
@@ -88,6 +89,7 @@ void serialEvent()
         temperature_target = subsystem_values[0];
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
+        ph_set_target(ph_target);
         //Serial.println(temperature_target);
         //Serial.println(rpm_target);
         //Serial.println(ph_target);
@@ -140,7 +142,8 @@ void loop() {
 // ----------------------------------------------------
 
 // ------------------- PH SUBSYSTEM -------------------
-ph = ph_read();
+    ph_loop();
+    ph = ph_get_current();
 // ----------------------------------------------------
 }
 
