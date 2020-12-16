@@ -7,7 +7,7 @@ Moderator *phmod = moderator(1.0, 0.5, 1.0, optimum);
 
 static void turn_on(byte reg) {
   write16(reg, 0x0002);
-  write16(reg + 2, 0x000F);
+  write16(reg + 2, 0x0004);
 }
 
 
@@ -28,6 +28,7 @@ float ph_read() {
 void ph_setup() {
   pinMode(ph_probe, INPUT);
   write8(mode_reg, AUTOINC);
+  moderator_clear(phmod);
 }
 
 
@@ -47,11 +48,11 @@ void ph_loop() {
 
   change = moderate(phmod, ph_read());
 
-  if (change < -4) {
+  if (change < -0.5) {
     turn_on(base_reg);
   } 
 
-  else if (change > 4) {
+  else if (change > 0.5) {
     turn_on(acid_reg);
   }
 }

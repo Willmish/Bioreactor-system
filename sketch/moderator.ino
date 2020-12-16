@@ -26,9 +26,14 @@ void moderator_goal(Moderator *self, float goal) {
 float moderate(Moderator *self, float input) {
   float e = self->goal - input;
   float d = e - self->error;
-
+  moderator_clear(self);
   self->error = e;
-  self->sum += e;
+  while (e > 0)
+  {
+    self->sum += e;
+    --e;
+  }
+  e = self->goal - input;
 
   return (self->p * e) + (self->i * self->sum) + (self->d * d);
 }

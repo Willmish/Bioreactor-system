@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include "stiring.h"
 #include "ph.h"
 
 #define NO_SUBSYSTEMS 3
