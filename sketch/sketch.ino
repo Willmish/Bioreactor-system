@@ -45,7 +45,7 @@ void setup() {
 	startTime = millis();
 
     rpm_target = 1000;
-    temperature_target = 25;
+    temperature_target = 30;
     ph_target = 5;
     ph_setup();
     ht_setup();
@@ -55,6 +55,8 @@ void setup() {
 
 void write_values()
 {
+    Serial.print("MESSAGE: ");
+    Serial.println(get_pwm(temperature));
     Serial.print(temperature);
     Serial.print(" ");
     Serial.print(rpm);
@@ -92,6 +94,7 @@ void serialEvent()
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
         ph_set_target(ph_target);
+        ht_set_target(temperature_target);
         //Serial.println(temperature_target);
         //Serial.println(rpm_target);
         //Serial.println(ph_target);
@@ -107,6 +110,9 @@ void loop() {
 // ---------------- HEATING SUBSYSTEM -----------------
     ht_loop();
     temperature = ht_get_current();
+
+    //Serial.print("Temp: ");
+    //Serial.println(temperature);
     //float error = 0;
     //float errorsum = 0;
     //float pwm;

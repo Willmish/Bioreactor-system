@@ -39,6 +39,9 @@ class Model:
         #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
         #    print(data)
         data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+        if (str(data, encoding="ascii")[:7] == "MESSAGE"):
+            print(data)
+            data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
         if(str(data, encoding="ascii") == "Something got sent!"):
             print(data)
             data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
