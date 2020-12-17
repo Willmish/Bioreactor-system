@@ -7,7 +7,7 @@
 #define thermistor_pin A0
 
 //double temperature = 0;
-Moderator *htmod = moderator(155, 50, 0, 30);
+Moderator *htmod = moderator(75, 0.02, 0, 30);
 
 void ht_setup();
 void ht_set_target(float target);
