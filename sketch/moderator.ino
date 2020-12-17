@@ -26,6 +26,10 @@ float moderate(Moderator *self, float input) {
   float d = e - self->error;
   self->error = e;
   self->sum =self->sum + e;
+  if (self->sum > self->goal)
+  {
+    self-> sum = self->goal; // cap the errorSum at goal
+  }
   //e = self->goal - input;
 
 

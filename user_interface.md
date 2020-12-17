@@ -57,10 +57,5 @@ Color selecting for ease of use (nice view)
 https://coolors.co/ffead0-2e5266-aeadf0-47e5bc-93032e
 
 
-SLIDE TEXT:
 
-### Program architecture
-- Uses Model View Controller Architecture
-- Model communicates with Arduino via Serial connection
-- Two loops running on separate threads
 

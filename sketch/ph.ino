@@ -2,7 +2,7 @@
 
 
 float change, optimum = 5.0;
-Moderator *phmod = moderator(1.0, 0.1, 1.0, optimum);
+Moderator *phmod = moderator(1.0, 0.05, 1.0, optimum);
 
 
 static void turn_on(byte reg) {

@@ -114,45 +114,6 @@ void loop() {
 // ---------------- HEATING SUBSYSTEM -----------------
     ht_loop();
     temperature = ht_get_current();
-
-    //Serial.print("Temp: ");
-    //Serial.println(temperature);
-    //float error = 0;
-    //float errorsum = 0;
-    //float pwm;
-    ////Find Temperature from Thermistor.
-    //// get 10 readings and average it
-    //temperature = 0;
-    //int i = 0;
-    //startTime_temp = millis();
-    //while (i<NO_READINGS_HEATING)
-    //{
-    //    if (millis() - startTime_temp >= 2)
-    //    {
-    //        temperature += (analogRead(thermistorPin)-782.86)/-10.678;
-    //        ++i;
-    //        startTime_temp = millis();
-    //    }
-    //}
-    //temperature /= NO_READINGS_HEATING;
-    //
-    //error=temperature_target-temperature;
-    //while(error>=0){
-    //  errorsum+=error;
-    //  error-=1;
-    //}
-    //error=temperature_target-temperature;
-    //// calculate pwm
-    //pwm=(15*error)+(5*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
-
-    ////Don't let pwm go over 255 or under 0
-    //if(pwm<0){
-    //pwm=0;
-    //}
-    //if(pwm>255){
-    //pwm=255;
-    //}
-    //analogWrite(heaterPin, pwm);
 // ----------------------------------------------------
 
 // ------------------- PH SUBSYSTEM -------------------
