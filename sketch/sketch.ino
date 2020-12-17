@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "ph.h"
+#include "heater.h"
 
 #define NO_SUBSYSTEMS 3
-#define NO_READINGS_HEATING 30
 #define ZERO_CELSIUS 273.15 // zero celsius in kelvin
 
 // These define which pins are connected to what device on the virtual bioreactor
@@ -45,14 +45,18 @@ void setup() {
 	startTime = millis();
 
     rpm_target = 1000;
-    temperature_target = 25;
+    temperature_target = 30;
     ph_target = 5;
     ph_setup();
+    ht_setup();
     ph_set_target(ph_target);
+    ht_set_target(temperature_target);
 	}
 
 void write_values()
 {
+    Serial.print("MESSAGE: ");
+    Serial.println(get_pwm(temperature));
     Serial.print(temperature);
     Serial.print(" ");
     Serial.print(rpm);
@@ -90,6 +94,7 @@ void serialEvent()
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
         ph_set_target(ph_target);
+        ht_set_target(temperature_target);
         //Serial.println(temperature_target);
         //Serial.println(rpm_target);
         //Serial.println(ph_target);
@@ -103,42 +108,47 @@ void loop() {
 // ----------------------------------------------------
 
 // ---------------- HEATING SUBSYSTEM -----------------
-    float error = 0;
-    float errorsum = 0;
-    float pwm;
-    //Find Temperature from Thermistor.
-    // get 10 readings and average it
-    temperature = 0;
-    int i = 0;
-    startTime_temp = millis();
-    while (i<NO_READINGS_HEATING)
-    {
-        if (millis() - startTime_temp >= 2)
-        {
-            temperature += (analogRead(thermistorPin)-782.86)/-10.678;
-            ++i;
-            startTime_temp = millis();
-        }
-    }
-    temperature /= NO_READINGS_HEATING;
-    
-    error=temperature_target-temperature;
-    while(error>=0){
-      errorsum+=error;
-      error-=1;
-    }
-    error=temperature_target-temperature;
-    // calculate pwm
-    pwm=(15*error)+(5*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
+    ht_loop();
+    temperature = ht_get_current();
 
-    //Don't let pwm go over 255 or under 0
-    if(pwm<0){
-    pwm=0;
-    }
-    if(pwm>255){
-    pwm=255;
-    }
-    analogWrite(heaterPin, pwm);
+    //Serial.print("Temp: ");
+    //Serial.println(temperature);
+    //float error = 0;
+    //float errorsum = 0;
+    //float pwm;
+    ////Find Temperature from Thermistor.
+    //// get 10 readings and average it
+    //temperature = 0;
+    //int i = 0;
+    //startTime_temp = millis();
+    //while (i<NO_READINGS_HEATING)
+    //{
+    //    if (millis() - startTime_temp >= 2)
+    //    {
+    //        temperature += (analogRead(thermistorPin)-782.86)/-10.678;
+    //        ++i;
+    //        startTime_temp = millis();
+    //    }
+    //}
+    //temperature /= NO_READINGS_HEATING;
+    //
+    //error=temperature_target-temperature;
+    //while(error>=0){
+    //  errorsum+=error;
+    //  error-=1;
+    //}
+    //error=temperature_target-temperature;
+    //// calculate pwm
+    //pwm=(15*error)+(5*errorsum)+((-0.001748*(double) pow(temperature_target,4))+(0.2249*(double) pow(temperature_target,3))-(10.97*(double) pow(temperature_target,2))+(244.4*(double) temperature_target)-2069);
+
+    ////Don't let pwm go over 255 or under 0
+    //if(pwm<0){
+    //pwm=0;
+    //}
+    //if(pwm>255){
+    //pwm=255;
+    //}
+    //analogWrite(heaterPin, pwm);
 // ----------------------------------------------------
 
 // ------------------- PH SUBSYSTEM -------------------

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdio.h>
-#include <math.h>
 #include "./pca9685.h"
 #include "./moderator.h"
 
@@ -13,8 +12,8 @@
 #define R 8.314510 // gas constant
 #define vstd 500.0 // voltage at pH-7
 #define ln10 2.3025850929940456840179914546843642076011014886287729760333279009
-double T = 295.0;// room temperature
 
+double T = 295.0; // room temperature
 static void turn_on(byte);
 static void turn_off(byte);
 float ph_read();

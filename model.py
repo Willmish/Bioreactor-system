@@ -15,9 +15,9 @@ class Model:
     def mainloop(self):
         while True:
             self.get_current()
-            sleep(0.2) # Wait for data to be sent by arduino
+            sleep(0.1) # Wait for data to be sent by arduino
             self.send_target()
-            sleep(0.2) # Wait for data to be read by arduino
+            sleep(0.05) # Wait for data to be read by arduino
 
     def send_target(self):
         self.controller.send_target()
@@ -34,11 +34,14 @@ class Model:
         #    print(data)
         self.arduino_serial.write(bytes("get current\n", 'ascii'))
         print("Getting current..")
-        sleep(0.2) # Wait for an answer from arduino
+        sleep(0.05) # Wait for an answer from arduino
         #while (self.arduino_serial.in_waiting):
         #    data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
         #    print(data)
         data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
+        if (str(data, encoding="ascii")[:7] == "MESSAGE"):
+            print(data)
+            data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
         if(str(data, encoding="ascii") == "Something got sent!"):
             print(data)
             data = self.arduino_serial.readline()[:-2] # Cut out the Endline char
