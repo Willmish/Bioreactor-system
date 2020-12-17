@@ -90,11 +90,6 @@ class Subsystem_Graph(tkinter.Frame):
     def pack_widget(self, *args, **kwargs):
         self.widget.pack(*args, **kwargs)
 
-# Create a GUI that interfaces with SimAVR
-class MainFrame(tkinter.Frame):
-    def __init__(self, master=None):
-        pass
-
 class View:
     def __init__(self):
         self.root: tkinter.Tk = tkinter.Tk(className="Bioreactor control system")

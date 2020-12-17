@@ -2,12 +2,12 @@
 
 
 float change, optimum = 5.0;
-Moderator *phmod = moderator(1.0, 0.0, 0.0, optimum);
+Moderator *phmod = moderator(1.0, 0.1, 1.0, optimum);
 
 
 static void turn_on(byte reg) {
   write16(reg, 0x0002);
-  write16(reg + 2, 0x0003);
+  write16(reg + 2, 0x0004);
 }
 
 
@@ -18,8 +18,21 @@ static void turn_off(byte reg) {
 
 
 float ph_read() {
-  int vout = analogRead(ph_probe);
-  return 7.0 + ((-vstd + vout)*F*0.001)/(R*T*ln10);
+    int vout, i=0;
+    float ph = 0;
+    float startTime = millis();
+    while (i<NO_READINGS_PH)
+    {
+        if (millis() - startTime >= 1)
+        {
+            vout = analogRead(ph_probe);
+            ph += 7.0 + ((-vstd + vout)*F*0.001)/(R*T*ln10);
+            ++i;
+            startTime = millis();
+        }
+    }
+    ph /= NO_READINGS_PH;
+    return ph;
 }
 
 
@@ -51,7 +64,6 @@ float ph_get_current() {
 void ph_loop() {
   turn_off(acid_reg);
   turn_off(base_reg);
-
   change = moderate(phmod, ph_read());
 
   if (change > 0.5) {

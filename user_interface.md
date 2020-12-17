@@ -23,7 +23,7 @@ The graphs are updated and animated in real time.
 The program utilises and MVC architecture (Model View Controller) to make the seperation of logic and the GUI
 as clear as possible.
 Below is a diagram explainining the high-level architecture. It is a UML diagram with an additional explanation of the communication between the Arduino (Simduino) and the Python script.
-![image](./images/UI_UML.png)
+![image](./images/UI_UML2.png)
 ### Running everything concurrently
 
 Because two infinite loops have to be run concurrently (GUI and Serial connection), the Serial connection is handled on a separate thread. Since there is a lot of waiting around for I/O commands, there is no need for a sparate process to be used here, as it would be an overkill.
@@ -55,3 +55,12 @@ Color selecting for ease of use (nice view)
 
 ### Color scheme
 https://coolors.co/ffead0-2e5266-aeadf0-47e5bc-93032e
+
+
+SLIDE TEXT:
+
+### Program architecture
+- Uses Model View Controller Architecture
+- Model communicates with Arduino via Serial connection
+- Two loops running on separate threads
+

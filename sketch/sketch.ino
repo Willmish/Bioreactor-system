@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 #include "ph.h"
 #include "heater.h"
 
@@ -154,8 +155,14 @@ void loop() {
 // ------------------- PH SUBSYSTEM -------------------
     // Update temperature from the heating subsystem
     ph_set_temperature(temperature + ZERO_CELSIUS);
+    if (abs(ph_target-ph)<0.2)
+    {
+        ph = ph_get_current();
+    }
+    else{ 
     ph_loop();
     ph = ph_get_current();
+    }
     //Serial.println(ph);
 // ----------------------------------------------------
 }
