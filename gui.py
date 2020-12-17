@@ -2,6 +2,7 @@ from enum import Enum
 from typing import List
 import tkinter
 import tkinter.font as font
+from time import time
 #Matplotlib
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -36,7 +37,7 @@ class Subsystem_Graph(tkinter.Frame):
         self.target_minus_err = []
         self.target_plus_err = []
         self.time_arr = []
-        self.time = 0
+        self.time = time()
         self.lowy, self.highy = y_lims
         self.error = y_error
 
@@ -73,15 +74,14 @@ class Subsystem_Graph(tkinter.Frame):
         self.target_plus_err.append(target+self.error)
         self.target_minus_err.append(target-self.error)
         # Update the target/data graphs
-        self.time_arr.append(self.time/1000)
-        self.time += self.animation_interval
+        self.time_arr.append((time()-self.time))
         self.target_plot.set_data(self.time_arr, self.target_arr)
         self.data_plot.set_data(self.time_arr, self.data_arr)
         # Update the fill_between collection
         self.axs.collections.clear()
         self.error_fill_collection = self.axs.fill_between(self.time_arr, self.target_minus_err, self.target_plus_err, color="orange", alpha=0.2, linestyle="--")
         xmin, xmax =plt.xlim()
-        if(self.time/1000>xmax):
+        if((time()-self.time)>xmax):
            xmin += 5
            xmax += 5
            self.axs.set_xlim(xmin, xmax)
