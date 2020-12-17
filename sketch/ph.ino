@@ -10,6 +10,11 @@ static void turn_on(byte reg) {
   write16(reg + 2, 0x0004);
 }
 
+static void flash_on(byte reg) {
+    turn_on(reg);
+    delay(2);
+    turn_off(reg);
+}
 
 static void turn_off(byte reg) {
   write16(reg, 0x0000);
@@ -67,11 +72,11 @@ void ph_loop() {
   change = moderate(phmod, ph_read());
 
   if (change > 0.5) {
-    turn_on(base_reg);
+    flash_on(base_reg);
   } 
 
   else if (change < -0.5) {
-    turn_on(acid_reg);
+    flash_on(acid_reg);
   }
 }
 

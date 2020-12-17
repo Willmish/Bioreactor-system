@@ -16,6 +16,7 @@ const byte thermistorPin = A0;
 const byte pHPin				 = A1;
 
 int intCount = 0;
+int phReadingCount = 0;
 int noRevolutionsForReading = 50;
 long long startTime = -1;
 long long prevTime = -1;
@@ -95,6 +96,8 @@ void serialEvent()
         rpm_target = subsystem_values[1];
         ph_target = subsystem_values[2];
         ph_set_target(ph_target);
+        // PH target changed, set phCounter back to 0
+        phReadingCount = 0;
         ht_set_target(temperature_target);
         //Serial.println(temperature_target);
         //Serial.println(rpm_target);
@@ -155,13 +158,18 @@ void loop() {
 // ------------------- PH SUBSYSTEM -------------------
     // Update temperature from the heating subsystem
     ph_set_temperature(temperature + ZERO_CELSIUS);
-    if (abs(ph_target-ph)<0.2)
+    if (phReadingCount < 3)
     {
+        if (abs(ph_target-ph)<0.1)
+        {
+            ph = ph_get_current();
+            ++phReadingCount;
+        }
+        else{ 
+        ph_loop();
+        phReadingCount = 0;
         ph = ph_get_current();
-    }
-    else{ 
-    ph_loop();
-    ph = ph_get_current();
+        }
     }
     //Serial.println(ph);
 // ----------------------------------------------------

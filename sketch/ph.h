@@ -8,7 +8,7 @@
 #define base_reg 0x0A
 #define ph_probe A1
 
-#define NO_READINGS_PH 200
+#define NO_READINGS_PH 50
 #define F 9.6485309E+4 // Faraday
 #define R 8.314510 // gas constant
 #define vstd 500.0 // voltage at pH-7
